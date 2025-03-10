@@ -1,17 +1,15 @@
-import { Squid } from "@0xsquid/sdk";
-import { ethers } from "ethers";
-import { Token } from "@0xsquid/squid-types";
+import { Squid } from '@0xsquid/sdk';
+import { ethers } from 'ethers';
+import { Token } from '@0xsquid/squid-types';
+import { SolanaSigner } from '@0xsquid/sdk/dist/types';
+import { Connection, Transaction, VersionedTransaction } from '@solana/web3.js';
 
-const SOLANA_CHAIN_ID = "solana-mainnet-beta";
-const PYYUSD_ADDRESS = "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo";
+const SOLANA_CHAIN_ID = 'solana-mainnet-beta';
+const PYYUSD_ADDRESS = '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo';
 
 interface TransferParams {
   squid: Squid;
-  signer: {
-    publicKey: string;
-    signTransaction: (transaction: any) => Promise<Uint8Array>;
-    signMessage: (message: any) => Promise<Uint8Array>;
-  };
+  signer: SolanaSigner;
   toToken: Token;
   amount: string;
   address: string;
@@ -52,28 +50,28 @@ export const executeSquidTransfer = async ({
 
     // Get the swap route using Squid SDK
     const { route, requestId } = await squid.getRoute(params);
-    console.log("📊 Calculated route:", {
+    console.log('📊 Calculated route:', {
       fromAmount,
       estimatedOutput: route.estimate.toAmount,
       requestId
     });
 
     // Execute the swap transaction
-    console.log("🚀 Executing route...");
+    console.log('🚀 Executing route...');
     const tx = await squid.executeRoute({
-      signer,
+      signer: signer,
       route,
     });
 
-    console.log("Transaction response:", tx);
+    console.log('Transaction response:', tx);
     
     // For Solana, tx should be a string (transaction signature)
     const txId = typeof tx === 'string' ? tx : null;
 
     if (!txId) {
-      throw new Error("Transaction failed - invalid response format");
+      throw new Error('Transaction failed - invalid response format');
     }
-    console.log("✅ Transaction executed:", txId);
+    console.log('✅ Transaction executed:', txId);
 
     // Return transaction details for status monitoring
     return {
@@ -83,7 +81,7 @@ export const executeSquidTransfer = async ({
       toChainId: toToken.chainId,
     };
   } catch (error) {
-    console.error("❌ Transfer failed:", error);
+    console.error('❌ Transfer failed:', error);
     throw error;
   }
 };
@@ -100,11 +98,11 @@ export const checkTransferStatus = async (
   try {
     const status = await squid.getStatus({
       ...params,
-      integratorId: process.env.NEXT_PUBLIC_SQUID_INTEGRATOR_ID || "",
+      integratorId: process.env.NEXT_PUBLIC_SQUID_INTEGRATOR_ID || '',
     });
     return status.squidTransactionStatus;
   } catch (error) {
-    console.error("Status check failed:", error);
+    console.error('Status check failed:', error);
     throw error;
   }
 }; 
