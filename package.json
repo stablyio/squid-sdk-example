@@ -14,6 +14,7 @@
     "@magic-ext/oauth": "^22.0.7",
     "@magic-ext/solana": "^25.21.0",
     "@solana/wallet-adapter-wallets": "^0.19.32",
+    "@solana/web3.js": "^1.98.0",
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
